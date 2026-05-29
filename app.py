@@ -499,26 +499,28 @@ def generate_html_report(packing, box_length, num_particles, min_diameter, max_d
                 </div>
                 
                 <!-- OVERLAP DETECTION -->
-                <div class="section">
-                    <h2>⚠️ Overlap Detection</h2>
-                    <table>
-                        <tr>
-                            <th>Metric</th>
-                            <th>Value</th>
-                        </tr>
-                        <tr>
-                            <td>Overlapping Particle Pairs</td>
-                            <td>{metrics['overlapping_pairs']}</td>
-                        </tr>
-                        <tr>
-                            <td>Status</td>
-                            <td>{'✓ PASS' if metrics['overlapping_pairs'] == 0 else '✗ FAIL'}</td>
-                        </tr>
-                    </table>
-                    <div class="status-badge {status_color}">
-                        {status_text} - {'No Overlaps Detected' if metrics['overlapping_pairs'] == 0 else f'{metrics["overlapping_pairs"]} Overlaps Found'}
+                <!-- 
+                    <div class="section">
+                        <h2>⚠️ Overlap Detection</h2>
+                        <table>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>Overlapping Particle Pairs</td>
+                                <td>{metrics['overlapping_pairs']}</td>
+                            </tr>
+                            <tr>
+                                <td>Status</td>
+                                <td>{'✓ PASS' if metrics['overlapping_pairs'] == 0 else '✗ FAIL'}</td>
+                            </tr>
+                        </table>
+                        <div class="status-badge {status_color}">
+                            {status_text} - {'No Overlaps Detected' if metrics['overlapping_pairs'] == 0 else f'{metrics["overlapping_pairs"]} Overlaps Found'}
+                        </div>
                     </div>
-                </div>
+                <!-- 
             </div>
             
             <div class="footer">
