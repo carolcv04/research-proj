@@ -652,27 +652,23 @@ def main():
     metrics = calculate_metrics(packing, box_length)
 
     # =========================================================
-    # ⚠️ OVERLAP DEBUG SECTION (ADD THIS HERE)
+    # ⚠️ OVERLAP DEBUG SECTION (COMMENTED OUT)
     # =========================================================
-    if metrics['overlapping_pairs'] > 0:
-        st.subheader("⚠️ Overlapping Particles Breakdown")
-
-        overlap_ids = metrics['overlapping_indices']
-        
-        st.write(f"Total overlapping particles: {len(overlap_ids)}")
-        st.write("Particle indices involved:", overlap_ids)
-        
-        overlap_table = packing[overlap_ids]
-
-        st.dataframe(
-            pd.DataFrame({
-                "Index": overlap_ids,
-                "X": overlap_table[:, 0],
-                "Y": overlap_table[:, 1],
-                "Z": overlap_table[:, 2],
-                "Diameter": overlap_table[:, 3]
-            }).style.highlight_max(axis=0)
-        )
+    # if metrics['overlapping_pairs'] > 0:
+    #     st.subheader("⚠️ Overlapping Particles Breakdown")
+    #     overlap_ids = metrics['overlapping_indices']
+    #     st.write(f"Total overlapping particles: {len(overlap_ids)}")
+    #     st.write("Particle indices involved:", overlap_ids)
+    #     overlap_table = packing[overlap_ids]
+    #     st.dataframe(
+    #         pd.DataFrame({
+    #             "Index": overlap_ids,
+    #             "X": overlap_table[:, 0],
+    #             "Y": overlap_table[:, 1],
+    #             "Z": overlap_table[:, 2],
+    #             "Diameter": overlap_table[:, 3]
+    #         }).style.highlight_max(axis=0)
+    #     )
         
     # DISPLAY PLOT
     fig = create_3d_plot(packing, box_length, num_particles)
@@ -690,8 +686,9 @@ def main():
     with col3:
         st.metric("Packing Fraction", f"{metrics['packing_fraction']:.4f}")
     with col4:
-        overlap_status = "✓ Pass" if metrics['overlapping_pairs'] == 0 else "✗ Fail"
-        st.metric("Overlap Status", overlap_status)
+        pass
+        # overlap_status = "✓ Pass" if metrics['overlapping_pairs'] == 0 else "✗ Fail"
+        # st.metric("Overlap Status", overlap_status)
     
     # DETAILED STATISTICS
     if st.checkbox("📈 Show Detailed Statistics"):
