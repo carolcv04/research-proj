@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 from math import pi
+from tqdm import tqdm
 
 
 def create_sphere(center, radius, color, name=None, resolution=10):
@@ -291,6 +292,7 @@ def print_statistics(packing, box_length, metrics=None):
     print(f"\n{'BOUNDARY CHECKS':^100}")
     print("-" * 100)
     particles_touching_boundary = 0
+    
     for i in range(len(packing)):
         x, y, z, d = packing[i]
         r = d / 2
@@ -304,12 +306,30 @@ def print_statistics(packing, box_length, metrics=None):
     print(f"\n{'OVERLAP DETECTION':^100}")
     print("-" * 100)
     overlapping_pairs = 0
+
+    # for i in tqdm(range(len(packing)), desc="Overlap check"):
+    #     for j in range(i+1, len(packing)):
+    #         dist = np.linalg.norm(packing[i, :3] - packing[j, :3])
+    #         min_dist = (packing[i, 3] + packing[j, 3]) / 2
+    #         if dist < min_dist - 0.001:
+    #             overlapping_pairs += 1
+
     for i in range(len(packing)):
-        for j in range(i+1, len(packing)):
-            dist = np.linalg.norm(packing[i, :3] - packing[j, :3])
-            min_dist = (packing[i, 3] + packing[j, 3]) / 2
-            if dist < min_dist - 0.001:
-                overlapping_pairs += 1
+    for j in range(i+1, len(packing)):
+        dist = np.linalg.norm(packing[i, :3] - packing[j, :3])
+        min_dist = (packing[i, 3] + packing[j, 3]) / 2
+
+        overlap_amount = min_dist - dist
+
+        if overlap_amount > 0.001:
+            overlaps.append((i, j, overlap_amount))
+
+    # for i in range(len(packing)):
+    #     for j in range(i+1, len(packing)):
+    #         dist = np.linalg.norm(packing[i, :3] - packing[j, :3])
+    #         min_dist = (packing[i, 3] + packing[j, 3]) / 2
+    #         if dist < min_dist - 0.001:
+    #             overlapping_pairs += 1
     print(f"  Overlapping particle pairs: {overlapping_pairs}")
     status = 'PASS ✓' if overlapping_pairs == 0 else 'FAIL ✗ - OVERLAPS DETECTED'
     print(f"  Status: {status}")

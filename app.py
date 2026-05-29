@@ -12,6 +12,7 @@ from math import pi
 from datetime import datetime
 from pathlib import Path
 from io import BytesIO
+import pandas as pd
 
 
 # ============================================================================
@@ -64,12 +65,24 @@ def calculate_metrics(packing, box_length):
     
     # Overlap detection
     overlapping_pairs = 0
+    overlapping_indices = set()
+
     for i in range(len(packing)):
         for j in range(i+1, len(packing)):
             dist = np.linalg.norm(packing[i, :3] - packing[j, :3])
             min_dist = (packing[i, 3] + packing[j, 3]) / 2
+            
             if dist < min_dist - 0.001:
                 overlapping_pairs += 1
+                overlapping_indices.add(i)
+                overlapping_indices.add(j)
+    # overlapping_pairs = 0
+    # for i in range(len(packing)):
+    #     for j in range(i+1, len(packing)):
+    #         dist = np.linalg.norm(packing[i, :3] - packing[j, :3])
+    #         min_dist = (packing[i, 3] + packing[j, 3]) / 2
+    #         if dist < min_dist - 0.001:
+    #             overlapping_pairs += 1
     
     return {
         'diameters': diameters,
@@ -84,7 +97,8 @@ def calculate_metrics(packing, box_length):
         'avg_neighbors': avg_neighbors,
         'boundary_particles': boundary_particles,
         'total_particles': len(packing),
-        'overlapping_pairs': overlapping_pairs
+        'overlapping_pairs': overlapping_pairs,
+        'overlapping_indices': list(overlapping_indices)
     }
 
 
@@ -634,7 +648,30 @@ def main():
     
     # CALCULATE METRICS
     metrics = calculate_metrics(packing, box_length)
-    
+
+    # =========================================================
+    # ⚠️ OVERLAP DEBUG SECTION (ADD THIS HERE)
+    # =========================================================
+    if metrics['overlapping_pairs'] > 0:
+        st.subheader("⚠️ Overlapping Particles Breakdown")
+
+        overlap_ids = metrics['overlapping_indices']
+        
+        st.write(f"Total overlapping particles: {len(overlap_ids)}")
+        st.write("Particle indices involved:", overlap_ids)
+        
+        overlap_table = packing[overlap_ids]
+
+        st.dataframe(
+            pd.DataFrame({
+                "Index": overlap_ids,
+                "X": overlap_table[:, 0],
+                "Y": overlap_table[:, 1],
+                "Z": overlap_table[:, 2],
+                "Diameter": overlap_table[:, 3]
+            }).style.highlight_max(axis=0)
+        )
+        
     # DISPLAY PLOT
     fig = create_3d_plot(packing, box_length, num_particles)
     st.plotly_chart(fig, use_container_width=True)
